@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.ser210finalproject.ui.screens.LoginScreen
+import com.example.ser210finalproject.ui.screens.MarketplaceScreen
 
 @Composable
 fun NavGraph() {
@@ -14,8 +15,14 @@ fun NavGraph() {
         startDestination = "login"
     ) {
         composable("login") {
-            LoginScreen()
+            LoginScreen(onLoginClick = {
+                navController.navigate("marketplace")
+            })
         }
-        // 4 other screens go here
+
+        composable("marketplace"){
+            MarketplaceScreen()
+        }
+        // 3 other screens go here
     }
 }
