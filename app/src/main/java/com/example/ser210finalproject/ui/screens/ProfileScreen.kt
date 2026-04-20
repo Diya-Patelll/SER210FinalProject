@@ -1,4 +1,84 @@
 package com.example.ser210finalproject.ui.screens
 
-class ProfileScreen {
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.example.ser210finalproject.ui.theme.QuinnipiacBlue
+
+@Composable
+fun ProfileScreen(onNavigate: (AppDestination) -> Unit) {
+    AppScaffold(
+        currentDestination = AppDestination.Profile,
+        onNavigate = onNavigate,
+        title = "Profile"
+    ) { modifier ->
+        Column(
+            modifier = modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            Card(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Text(
+                        text = "Connor N.",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "bobcat@qu.edu",
+                        color = QuinnipiacBlue,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Text(
+                        text = "Status: Verified Quinnipiac student",
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
+            }
+
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                Column(modifier = Modifier.padding(18.dp)) {
+                    Text("MealPoints left", fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "425",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = QuinnipiacBlue,
+                        modifier = Modifier.padding(top = 6.dp)
+                    )
+                }
+            }
+
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = QuinnipiacBlue)
+            ) {
+                Column(modifier = Modifier.padding(18.dp)) {
+                    Text(
+                        text = "Current listing",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "200 MealPoints for $128",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(top = 6.dp)
+                    )
+                }
+            }
+        }
+    }
 }
