@@ -9,8 +9,8 @@ class OfflineItemsRepository(
     private val purchaseDao: PurchaseDAO
 ) : ItemsRepository {
 
-    override fun getStudentStream(id: String): Flow<Student?> =
-        studentDao.getStudent(id)
+    override fun getStudentStream(email: String): Flow<Student?> =
+        studentDao.getStudentByEmail(email)
 
     override suspend fun insertStudent(student: Student) =
         studentDao.insertStudent(student)

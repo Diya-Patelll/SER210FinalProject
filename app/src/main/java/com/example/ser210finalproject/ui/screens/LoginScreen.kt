@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -27,13 +28,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.ser210finalproject.ui.theme.QuinnipiacBlue
 import com.example.ser210finalproject.ui.theme.QuinnipiacBlueLight
-import com.example.ser210finalproject.ui.theme.QuinnipiacGold
 import com.example.ser210finalproject.ui.theme.QuinnipiacGoldSoft
+import com.example.ser210finalproject.ui.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(onLoginClick: () -> Unit) {
+fun LoginScreen(
+    loginViewModel: LoginViewModel,
+    onLoginSuccess: (String) -> Unit
+) {
     var quEmail by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -63,9 +70,10 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     value = quEmail,
                     onValueChange = { quEmail = it },
                     label = { Text("Quinnipiac email") },
-                    placeholder = { Text("bobcat@qu.edu") },
+                    placeholder = { Text("name.lastname@qu.edu") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    singleLine = true,
+                    isError = errorMessage != null
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -75,15 +83,40 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+                if (errorMessage != null) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
-                    onClick = onLoginClick,
+                    onClick = {
+                        val email = quEmail.trim().lowercase()
+
+                        if (loginViewModel.isValidQuEmail(email)) {
+                            coroutineScope.launch {
+                                loginViewModel.loginOrRegister(email)
+                                onLoginSuccess(email)
+                            }
+                        } else {
+                            errorMessage = "Login with QU Email"
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Enter marketplace")
                 }
                 TextButton(
-                    onClick = onLoginClick,
+                    onClick = {
+                        val demoEmail = "bob.cat@quinnipiac.edu"
+                        coroutineScope.launch {
+                            loginViewModel.loginOrRegister(demoEmail)
+                            onLoginSuccess(demoEmail)
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Continue with demo access", color = QuinnipiacBlue)

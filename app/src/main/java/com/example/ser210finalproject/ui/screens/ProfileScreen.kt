@@ -15,7 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.example.ser210finalproject.ui.theme.QuinnipiacBlue
 
 @Composable
-fun ProfileScreen(onNavigate: (AppDestination) -> Unit) {
+fun ProfileScreen(onNavigate: (AppDestination) -> Unit,
+    displayName: String,
+    email: String
+) {
     AppScaffold(
         currentDestination = AppDestination.Profile,
         onNavigate = onNavigate,
@@ -31,12 +34,12 @@ fun ProfileScreen(onNavigate: (AppDestination) -> Unit) {
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Text(
-                        text = "Connor N.",
+                        text = displayName,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "bobcat@qu.edu",
+                        text = email,
                         color = QuinnipiacBlue,
                         modifier = Modifier.padding(top = 4.dp)
                     )

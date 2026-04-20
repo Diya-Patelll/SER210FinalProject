@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StudentDAO {
-    @Query("SELECT * FROM students WHERE userId = :id")
-    fun getStudent(id: String): Flow<Student?>
+    @Query("SELECT * from students WHERE email = :email")
+    fun getStudentByEmail(email: String): Flow<Student?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStudent(student: Student)

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 // abstracts data source from rest of the app
 interface ItemsRepository {
     // student operations
-    fun getStudentStream(id: String): Flow<Student?>
+    fun getStudentStream(email: String): Flow<Student?>
     suspend fun insertStudent(student: Student)
 
     // listing operations (marketplace logic)
