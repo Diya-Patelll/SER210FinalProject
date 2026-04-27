@@ -1,5 +1,6 @@
 package com.example.ser210finalproject.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,16 +23,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.ser210finalproject.ui.theme.QuinnipiacBlue
-import com.example.ser210finalproject.ui.theme.QuinnipiacGoldSoft
 
 @Composable
-fun MarketplaceScreen(onNavigate: (AppDestination) -> Unit) {
+fun MarketplaceScreen(
+    listings: List<MarketListing>,
+    onNavigate: (AppDestination) -> Unit,
+    onOpenListing: (MarketListing) -> Unit
+) {
     var showLowerPriceOnly by remember { mutableStateOf(false) }
-    val listings = listOf(
-        MarketListing("Sophia R.", 120, 78),
-        MarketListing("Marcus T.", 250, 160),
-        MarketListing("Ava C.", 80, 52)
-    )
     val filteredListings = if (showLowerPriceOnly) {
         listings.filter { it.price <= 100 }
     } else {
@@ -69,6 +68,9 @@ fun MarketplaceScreen(onNavigate: (AppDestination) -> Unit) {
 
             items(filteredListings) { listing ->
                 Card(
+                    modifier = Modifier.clickable {
+                        onOpenListing(listing)
+                    },
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
@@ -93,15 +95,15 @@ fun MarketplaceScreen(onNavigate: (AppDestination) -> Unit) {
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(top = 8.dp)
                         )
+                        Text(
+                            text = listing.ratioText,
+                            color = QuinnipiacBlue,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 6.dp)
+                        )
                     }
                 }
             }
         }
     }
 }
-
-private data class MarketListing(
-    val seller: String,
-    val points: Int,
-    val price: Int
-)

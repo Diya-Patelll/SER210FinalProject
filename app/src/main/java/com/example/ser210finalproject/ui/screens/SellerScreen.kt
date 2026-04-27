@@ -23,7 +23,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SellerScreen(onNavigate: (AppDestination) -> Unit) {
+fun SellerScreen(
+    onNavigate: (AppDestination) -> Unit,
+    onPostListing: (points: Int, price: Int) -> Unit
+) {
     var points by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
 
@@ -64,7 +67,15 @@ fun SellerScreen(onNavigate: (AppDestination) -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(18.dp))
                     Button(
-                        onClick = { },
+                        onClick = {
+                            val parsedPoints = points.toIntOrNull()
+                            val parsedPrice = price.toIntOrNull()
+                            if (parsedPoints != null && parsedPrice != null && parsedPoints > 0 && parsedPrice > 0) {
+                                onPostListing(parsedPoints, parsedPrice)
+                                points = ""
+                                price = ""
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Post listing")

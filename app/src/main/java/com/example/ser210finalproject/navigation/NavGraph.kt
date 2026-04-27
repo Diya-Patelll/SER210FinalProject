@@ -1,7 +1,9 @@
 package com.example.ser210finalproject.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -12,7 +14,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.ser210finalproject.MarketplaceApplication
 import com.example.ser210finalproject.ui.screens.AppDestination
+import com.example.ser210finalproject.ui.screens.ListingDetailScreen
 import com.example.ser210finalproject.ui.screens.LoginScreen
+import com.example.ser210finalproject.ui.screens.MarketListing
 import com.example.ser210finalproject.ui.screens.MarketplaceScreen
 import com.example.ser210finalproject.ui.screens.ProfileScreen
 import com.example.ser210finalproject.ui.screens.SellerScreen
@@ -26,6 +30,16 @@ fun NavGraph() {
         LoginViewModel(application.container.itemsRepository)
     }
     var currentUserEmail by remember { mutableStateOf("diya.patel@quinnipiac.edu") }
+    val marketListings = remember {
+        mutableStateListOf(
+            MarketListing("Sophia R.", 120, 78),
+            MarketListing("Marcus T.", 250, 160),
+            MarketListing("Ava C.", 80, 52),
+            MarketListing("Jhon F.", 500, 100),
+            MarketListing("Kyle L.", 750, 300)
+        )
+    }
+    var selectedListing by remember { mutableStateOf<MarketListing?>(null) }
 
     NavHost(
         navController = navController,
@@ -44,9 +58,35 @@ fun NavGraph() {
         }
 
         composable(AppDestination.Marketplace.route) {
-            MarketplaceScreen(onNavigate = { destination ->
-                navigateToMainScreen(navController, destination)
-            })
+            MarketplaceScreen(
+                listings = marketListings,
+                onNavigate = { destination ->
+                    navigateToMainScreen(navController, destination)
+                },
+                onOpenListing = { listing ->
+                    selectedListing = listing
+                    navController.navigate(
+                        "listingDetail/${Uri.encode(listing.seller)}/${listing.points}/${listing.price}"
+                    )
+                }
+            )
+        }
+
+        composable("listingDetail/{seller}/{points}/{price}") { backStackEntry ->
+            val seller = Uri.decode(backStackEntry.arguments?.getString("seller").orEmpty())
+            val points = backStackEntry.arguments?.getString("points")?.toIntOrNull() ?: 0
+            val price = backStackEntry.arguments?.getString("price")?.toIntOrNull() ?: 0
+            val listing = selectedListing ?: MarketListing(seller, points, price)
+
+            ListingDetailScreen(
+                listing = listing,
+                onNavigate = { destination ->
+                    navigateToMainScreen(navController, destination)
+                },
+                onBackToMarketplace = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(AppDestination.Profile.route) {
@@ -55,14 +95,27 @@ fun NavGraph() {
                     navigateToMainScreen(navController, destination)
                 },
                 displayName = loginViewModel.getDisplayNameFromEmail(currentUserEmail),
-                email = currentUserEmail
+                email = currentUserEmail,
+                currentListing = marketListings.firstOrNull { it.seller == loginViewModel.getDisplayNameFromEmail(currentUserEmail) }
             )
         }
 
         composable(AppDestination.Seller.route) {
-            SellerScreen(onNavigate = { destination ->
-                navigateToMainScreen(navController, destination)
-            })
+            SellerScreen(
+                onNavigate = { destination ->
+                    navigateToMainScreen(navController, destination)
+                },
+                onPostListing = { points, price ->
+                    val sellerName = loginViewModel.getDisplayNameFromEmail(currentUserEmail)
+                    val newListing = MarketListing(sellerName, points, price)
+                    marketListings.removeAll { it.seller == sellerName }
+                    marketListings.add(0, newListing)
+                    selectedListing = newListing
+                    navController.navigate(AppDestination.Marketplace.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }

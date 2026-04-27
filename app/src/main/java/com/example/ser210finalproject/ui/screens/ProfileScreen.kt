@@ -17,7 +17,8 @@ import com.example.ser210finalproject.ui.theme.QuinnipiacBlue
 @Composable
 fun ProfileScreen(onNavigate: (AppDestination) -> Unit,
     displayName: String,
-    email: String
+    email: String,
+    currentListing: MarketListing?
 ) {
     AppScaffold(
         currentDestination = AppDestination.Profile,
@@ -57,7 +58,7 @@ fun ProfileScreen(onNavigate: (AppDestination) -> Unit,
                 Column(modifier = Modifier.padding(18.dp)) {
                     Text("MealPoints left", fontWeight = FontWeight.Bold)
                     Text(
-                        text = "425",
+                        text = "762",
                         style = MaterialTheme.typography.headlineMedium,
                         color = QuinnipiacBlue,
                         modifier = Modifier.padding(top = 6.dp)
@@ -76,7 +77,8 @@ fun ProfileScreen(onNavigate: (AppDestination) -> Unit,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "200 MealPoints for $128",
+                        text = currentListing?.let { "${it.points} MealPoints for $${it.price}" }
+                            ?: "No active listing",
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(top = 6.dp)
                     )
