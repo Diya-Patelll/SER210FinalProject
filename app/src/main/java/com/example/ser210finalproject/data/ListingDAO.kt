@@ -14,7 +14,7 @@ interface ListingDAO {
     @Query("SELECT * FROM listings WHERE isSold = 0")
     fun getAllActiveListings(): Flow<List<Listing>>
 
-    @Query("SELECT * FROM listings WHERE listedID = :id")
+    @Query("SELECT * FROM listings WHERE listedId = :id")
     fun getListing(id: Int): Flow<Listing?>
 
     // users view all listings that they've posted
@@ -27,7 +27,7 @@ interface ListingDAO {
     @Update
     suspend fun updateListing(listing: Listing)
 
-    @Query("UPDATE listings SET isSold = 1 WHERE listedID = :id")
+    @Query("UPDATE listings SET isSold = 1 WHERE listedId = :id")
     suspend fun markListingAsSold(id: Int)
 
     @Delete

@@ -21,14 +21,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.ser210finalproject.viewmodel.SellerViewModel
 
 @Composable
 fun SellerScreen(
     onNavigate: (AppDestination) -> Unit,
-    onPostListing: (points: Int, price: Int) -> Unit
+    sellerViewModel: SellerViewModel,
+    currentUserEmail: String
 ) {
     var points by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     AppScaffold(
         currentDestination = AppDestination.Seller,
@@ -52,7 +55,10 @@ fun SellerScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
                         value = points,
-                        onValueChange = { points = it },
+                        onValueChange = {
+                            points = it
+                            errorMessage = null
+                        },
                         label = { Text("MealPoints") },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
@@ -60,21 +66,37 @@ fun SellerScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     OutlinedTextField(
                         value = price,
-                        onValueChange = { price = it },
+                        onValueChange = {
+                            price = it
+                            errorMessage = null
+                        },
                         label = { Text("Price") },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
+                    if (errorMessage != null) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = errorMessage!!,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                     Spacer(modifier = Modifier.height(18.dp))
                     Button(
                         onClick = {
-                            val parsedPoints = points.toIntOrNull()
-                            val parsedPrice = price.toIntOrNull()
-                            if (parsedPoints != null && parsedPrice != null && parsedPoints > 0 && parsedPrice > 0) {
-                                onPostListing(parsedPoints, parsedPrice)
-                                points = ""
-                                price = ""
-                            }
+                            sellerViewModel.postListing(
+                                sellerEmail = currentUserEmail,
+                                points = points,
+                                price = price,
+                                onSuccess = {
+                                    points = ""
+                                    price = ""
+                                    onNavigate(AppDestination.Marketplace)
+                                },
+                                onError = { message ->
+                                    errorMessage = message
+                                }
+                            )
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
