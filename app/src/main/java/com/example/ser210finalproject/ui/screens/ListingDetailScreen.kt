@@ -15,7 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,7 @@ fun ListingDetailScreen(
     onNavigateBack: () -> Unit
 ) {
     val listing by viewModel.listing.collectAsState(initial = null)
+    var isConfirming by remember { mutableStateOf(false) }
     val backInteractionSource = remember { MutableInteractionSource() }
     val backHovered by backInteractionSource.collectIsHoveredAsState()
     val confirmInteractionSource = remember { MutableInteractionSource() }
@@ -101,7 +104,13 @@ fun ListingDetailScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { },
+                onClick = {
+                    isConfirming = true
+                    viewModel.confirmPurchase {
+                        onNavigateBack()
+                    }
+                },
+                enabled = !isConfirming,
                 interactionSource = confirmInteractionSource,
                 modifier = Modifier
                     .hoverable(confirmInteractionSource),
@@ -109,7 +118,7 @@ fun ListingDetailScreen(
                     containerColor = confirmColor
                 )
             ) {
-                Text("Confirm Purchase")
+                Text(if (isConfirming) "Processing..." else "Confirm Purchase")
             }
         }
     }

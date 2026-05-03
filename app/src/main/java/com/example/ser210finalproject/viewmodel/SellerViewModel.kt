@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ser210finalproject.data.ItemsRepository
 import com.example.ser210finalproject.data.Listing
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class SellerViewModel(private val itemsRepository: ItemsRepository) : ViewModel() {
@@ -26,8 +27,30 @@ class SellerViewModel(private val itemsRepository: ItemsRepository) : ViewModel(
         }
 
         viewModelScope.launch {
+            val normalizedEmail = sellerEmail.trim().lowercase()
+            val student = itemsRepository.getStudentStream(normalizedEmail).firstOrNull()
+
+            if (student == null) {
+                onError("Unable to verify student balance.")
+                return@launch
+            }
+
+            val activeSellerListings = itemsRepository
+                .getAllActiveListingsStream()
+                .firstOrNull()
+                .orEmpty()
+                .filter { it.sellerID == normalizedEmail.substringBefore("@") }
+
+            val alreadyListedPoints = activeSellerListings.sumOf { it.pointsAmount }
+            val availableToList = student.mealpointBalance - alreadyListedPoints
+
+            if (pointsValue > availableToList) {
+                onError("Insufficient MealPoints.")
+                return@launch
+            }
+
             val newListing = Listing(
-                sellerID = sellerEmail.substringBefore("@"),
+                sellerID = normalizedEmail.substringBefore("@"),
                 pointsAmount = pointsValue,
                 askingPrice = priceValue,
                 isSold = false

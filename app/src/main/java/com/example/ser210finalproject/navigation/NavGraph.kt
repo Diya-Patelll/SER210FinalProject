@@ -8,7 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -96,7 +95,7 @@ fun NavGraph() {
                 onLogout = {
                     currentUserEmail = ""
                     navController.navigate("login") {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(AppDestination.Marketplace.route) {
                             inclusive = true
                         }
                         launchSingleTop = true

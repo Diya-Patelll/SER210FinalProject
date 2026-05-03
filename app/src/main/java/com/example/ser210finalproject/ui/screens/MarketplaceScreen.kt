@@ -44,6 +44,9 @@ fun MarketplaceScreen(
 ) {
     val listings by viewModel.filteredListings.collectAsState(initial = emptyList())
     val selectedSortOption by viewModel.selectedSortOption.collectAsState()
+    val visibleListings = listings.filterNot {
+        viewModel.isOwnListing(it.sellerID, currentUserEmail)
+    }
     var filterMenuExpanded by remember { mutableStateOf(false) }
     val filterInteractionSource = remember { MutableInteractionSource() }
     val filterHovered by filterInteractionSource.collectIsHoveredAsState()
@@ -109,8 +112,7 @@ fun MarketplaceScreen(
                 }
             }
 
-            items(listings) { listing ->
-                val isOwnListing = viewModel.isOwnListing(listing.sellerID,currentUserEmail)
+            items(visibleListings) { listing ->
                 val buttonInteractionSource = remember(listing.listedId) { MutableInteractionSource() }
                 val buttonHovered by buttonInteractionSource.collectIsHoveredAsState()
                 Card(
@@ -147,15 +149,14 @@ fun MarketplaceScreen(
                             )
                             Button(
                                 onClick = {onListingClick(listing.listedId)},
-                                enabled = !isOwnListing,
                                 shape = RoundedCornerShape(8.dp),
                                 interactionSource = buttonInteractionSource,
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = if (buttonHovered && !isOwnListing) QuinnipiacBlueLight else QuinnipiacBlue
+                                    containerColor = if (buttonHovered) QuinnipiacBlueLight else QuinnipiacBlue
                                 ),
                                 modifier = Modifier.hoverable(buttonInteractionSource)
                             ) {
-                                Text(text = if(isOwnListing) "My Listing" else "Buy")
+                                Text(text = "Buy")
                             }
                         }
                         Text(
