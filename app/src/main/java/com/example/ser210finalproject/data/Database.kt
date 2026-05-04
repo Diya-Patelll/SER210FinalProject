@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 // Room Database for app
 // defines entities and provides access to DAOs
 @Database(
-    entities = [Student::class, Listing::class, Purchase::class], version = 1, exportSchema = false)
+    entities = [Student::class, Listing::class, Purchase::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun studentDao(): StudentDAO
     abstract fun listingDao(): ListingDAO

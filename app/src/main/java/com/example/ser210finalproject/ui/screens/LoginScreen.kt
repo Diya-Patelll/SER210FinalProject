@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.ser210finalproject.ui.theme.QuinnipiacBlue
 import com.example.ser210finalproject.ui.theme.QuinnipiacBlueLight
@@ -72,7 +73,9 @@ fun LoginScreen(
                     onValueChange = { quEmail = it },
                     label = { Text("Quinnipiac email") },
                     placeholder = { Text("name.lastname@qu.edu") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("login_email_field"),
                     singleLine = true,
                     isError = errorMessage != null
                 )
@@ -81,7 +84,9 @@ fun LoginScreen(
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Password") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("login_password_field"),
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation()
                 )
@@ -90,7 +95,8 @@ fun LoginScreen(
                     Text(
                         text = errorMessage!!,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.testTag("login_error_text")
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -107,7 +113,9 @@ fun LoginScreen(
                             errorMessage = "Login with QU Email"
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("login_submit_button")
                 ) {
                     Text("Enter marketplace")
                 }

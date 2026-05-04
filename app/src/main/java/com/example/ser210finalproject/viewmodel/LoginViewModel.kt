@@ -14,13 +14,18 @@ class LoginViewModel(private val itemsRepository: ItemsRepository) : ViewModel()
     }
 
     fun getDisplayNameFromEmail(email: String): String {
+        if (email.isBlank()) return ""
         val namePart = email.trim().substringBefore("@")
         val firstName = namePart.substringBefore(".")
             .lowercase()
             .replaceFirstChar { it.uppercase() }
-        val lastName = namePart.substringAfter(".")
+        val lastName = namePart.substringAfter(".", "")
 
-        return "$firstName ${lastName.first().uppercaseChar()}."
+        return if (lastName.isNotEmpty()) {
+            "$firstName ${lastName.first().uppercaseChar()}."
+        } else {
+            firstName
+        }
     }
 
     suspend fun loginOrRegister(email: String): Student {

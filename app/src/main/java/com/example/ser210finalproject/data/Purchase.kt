@@ -11,4 +11,5 @@ data class Purchase(
     val buyerId: String,   // who bought it, links to Student u_id
     val sellerId: String,  // who sold it
     val pricePaid: Double, // records price
+    val timestamp: Long = System.currentTimeMillis()
 )

@@ -9,10 +9,6 @@ import kotlinx.coroutines.flow.Flow
 interface PurchaseDAO {
     @Insert
     suspend fun insertPurchase(purchase: Purchase)
-
-    @Query("SELECT * FROM purchases")
-    fun getPurchaseHistory(): Flow<List<Purchase>>
-
     @Query("SELECT * FROM purchases WHERE buyerId = :buyerId")
     fun getPurchasesForBuyer(buyerId: String): Flow<List<Purchase>>
 }

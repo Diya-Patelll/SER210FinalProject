@@ -76,7 +76,7 @@ fun NavGraph() {
         ) { backStackEntry ->
             val listingId = backStackEntry.arguments?.getInt("listingId") ?: 0
             val detailViewModel = remember (listingId){
-                ListingDetailViewModel(itemsRepository,listingId)
+                ListingDetailViewModel(itemsRepository, listingId, currentUserEmail)
             }
             ListingDetailScreen(
                 viewModel = detailViewModel,
@@ -95,7 +95,7 @@ fun NavGraph() {
                 onLogout = {
                     currentUserEmail = ""
                     navController.navigate("login") {
-                        popUpTo(AppDestination.Marketplace.route) {
+                        popUpTo(0) {
                             inclusive = true
                         }
                         launchSingleTop = true

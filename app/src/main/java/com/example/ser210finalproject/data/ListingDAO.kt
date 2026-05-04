@@ -4,12 +4,14 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 // DAO for listing, defines SQL queries for the Marketplace
 @Dao
 interface ListingDAO {
+    @Query("SELECT * FROM listings")
+    fun getAllListings(): Flow<List<Listing>>
+
     // listings that haven't been sold
     @Query("SELECT * FROM listings WHERE isSold = 0")
     fun getAllActiveListings(): Flow<List<Listing>>
@@ -23,9 +25,6 @@ interface ListingDAO {
 
     @Insert
     suspend fun insertListing(listing: Listing)
-
-    @Update
-    suspend fun updateListing(listing: Listing)
 
     @Query("UPDATE listings SET isSold = 1 WHERE listedId = :id")
     suspend fun markListingAsSold(id: Int)
